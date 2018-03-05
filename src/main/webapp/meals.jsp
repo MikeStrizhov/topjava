@@ -1,4 +1,5 @@
-<%@ page import="java.util.Enumeration" %>
+<%@ page import="java.util.List" %>
+<%@ page import="ru.javawebinar.topjava.model.MealWithExceed" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
@@ -9,11 +10,9 @@
 <h3><a href="index.html">Home</a></h3>
 <h2>Meals</h2>
 
-<% Enumeration<String> names = request.getAttributeNames();
-    while (names.hasMoreElements()){
-        String attName = (String)names.nextElement();
-        System.out.println("<br/>" + attName);
-    }
+<%
+    List<MealWithExceed> eList = (List<MealWithExceed>)request.getAttribute("mealWithExceedList");
+    request.setAttribute("eList", eList);
 %>
 
 <table border = "1" width = "100%">
@@ -24,12 +23,19 @@
         <th>isExceed</th>
     </tr>
 
-    <c:forEach var = "meal" items = "${requestScope.mealWithExceedList}">
-        <tr>
-            <td><c:out value = "${meal.getDateTime}"/></td>
-            <td><c:out value = "${meal.getDescription}"/></td>
-            <td><c:out value = "${meal.getCalories}"/></td>
-            <td><c:out value = "${meal.isExceed}"/></td>
+    <c:forEach var = "meal" items="${eList}">
+        <c:choose>
+        <c:when test="${meal.exceed}">
+            <tr class="text" style="color:red; font-size:20px;">
+        </c:when>
+        <c:otherwise>
+            <tr class="text" style="color:green; font-size:20px;">
+        </c:otherwise>
+        </c:choose>
+            <td><c:out value = "${meal.dateTimeAsString}"/></td>
+            <td><c:out value = "${meal.description}"/></td>
+            <td><c:out value = "${meal.calories}"/></td>
+            <td><c:out value = "${meal.exceed}"/></td>
         </tr>
     </c:forEach>
 </table>
