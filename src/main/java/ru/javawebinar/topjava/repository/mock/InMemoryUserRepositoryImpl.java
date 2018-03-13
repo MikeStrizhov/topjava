@@ -8,6 +8,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.UserUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,15 +18,17 @@ import java.util.stream.Collectors;
 @Repository
 public class InMemoryUserRepositoryImpl implements UserRepository {
 
+    private final Integer INITIAL_VALUE = 10000;
+
     private Map<Integer, User> repository = new ConcurrentHashMap<>();
-    private AtomicInteger counter = new AtomicInteger(0);
+    private AtomicInteger counter = new AtomicInteger(INITIAL_VALUE);
 
     private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepositoryImpl.class);
 
 
-/*    {
-        MealsUtil.MEALS.forEach(this::save);
-    }*/
+    {
+        UserUtil.USERS.forEach(this::save);
+    }
 
     @Override
     public boolean delete(int id) {
