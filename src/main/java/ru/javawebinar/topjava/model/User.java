@@ -41,6 +41,7 @@ public class User extends AbstractNamedEntity {
 
     @Column(name = "registered", columnDefinition = "timestamp default now()")
     @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
     private Date registered = new Date();
 
     @Enumerated(EnumType.STRING)
