@@ -14,20 +14,22 @@
     <!-- Change DB by comment/uncomment property-placeholder -->
 
     <!--<context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE"/>-->
-    <!--<context:property-placeholder location="classpath:db/hsqldb.properties" system-properties-mode="OVERRIDE"/>-->
+<!--    <context:property-placeholder location="classpath:db/hsqldb.properties" system-properties-mode="OVERRIDE"/>-->
+
+    <context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE"/>
 
     <!--<context:component-scan base-package="ru.javawebinar.**.repository.jpa"/>-->
 
     <context:component-scan base-package="ru.javawebinar.**.repository.datajpa"/>
     <jpa:repositories base-package="ru.javawebinar.**.repository.datajpa"/>
 
-    <jdbc:initialize-database data-source="dataSource" enabled="${database.init}">
+    <jdbc:initialize-database data-source="dataSource3" enabled="${jpa.showSql}">
         <jdbc:script location="classpath:db/${jdbc.initLocation}"/>
         <jdbc:script encoding="utf-8" location="classpath:db/populateDB.sql"/>
     </jdbc:initialize-database>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
-          p:dataSource-ref="dataSource"
+          p:dataSource-ref="dataSource3"
           p:packagesToScan="ru.javawebinar.**.model">
         <!--p:persistenceUnitName="persistenceUnit">-->
 
@@ -42,9 +44,9 @@
 
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
-                    p:showSql="#{new Boolean('${jpa.showSql')}">
-                  <!--p:showSql="${jpa.showSql}">-->
-            </bean>
+                  p:showSql="${jpa.showSql}">
+        <!--p:showSql="#{new Boolean('${jpa.showSql')}">-->
+    </bean>
         </property>
     </bean>
 
@@ -53,6 +55,13 @@
     <!-- Transaction manager for a single JPA EntityManagerFactory (alternative to JTA) -->
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
           p:entityManagerFactory-ref="entityManagerFactory"/>
+
+    <bean id="dataSource3"
+          class="org.apache.tomcat.jdbc.pool.DataSource"
+          p:driverClassName="org.postgresql.Driver"
+          p:url="jdbc:postgresql://localhost:5432/topjava"
+          p:username="user"
+          p:password="password"/>
 
 <!--
     <context:component-scan base-package="ru.javawebinar.**.repository.jdbc"/>
@@ -80,7 +89,14 @@
     <beans profile="postgres">
         <context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE"/>
 
-        <bean id="dataSource"
+        <bean id="dataSource2"
+              class="org.apache.tomcat.jdbc.pool.DataSource"
+              p:driverClassName="org.postgresql.Driver"
+              p:url="${database.url}"
+              p:username="${database.username}"
+              p:password="${database.password}"/>
+
+        <bean id="dataSource1"
               class="org.apache.tomcat.jdbc.pool.DataSource"
               p:driverClassName="org.postgresql.Driver"
               p:url="${database.url}"

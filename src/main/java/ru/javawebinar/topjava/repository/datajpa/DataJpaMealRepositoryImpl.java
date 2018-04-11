@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDateTime;
@@ -17,9 +18,30 @@ public class DataJpaMealRepositoryImpl implements MealRepository {
     @Autowired
     private CrudMealRepository crudRepository;
 
+    @Autowired
+    private CrudUserRepository crudUserRepository;
+
     @Override
-    public Meal save(Meal Meal, int userId) {
-        return null;
+    public Meal save(Meal meal, int userId) {
+/*
+        if (meal.isNew()) {
+            crudRepository.insert(meal, userId);
+        } else {
+            crudRepository.update(meal, userId);
+        }
+*/
+
+/*        if (meal.isNew()) {
+            meal.setUser(crudUserRepository.findById(userId).get());
+            crudRepository.insert(meal, userId);
+        } else {
+            crudRepository.update(meal, userId);
+        }*/
+
+        meal.setUser(crudUserRepository.findById(userId).get());
+        return crudRepository.save(meal);
+
+        //return crudRepository.save(Meal, userId);
     }
 
     @Override
@@ -39,6 +61,7 @@ public class DataJpaMealRepositoryImpl implements MealRepository {
 
     @Override
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-        return crudRepository.findByDateTimeBetweenAndUserIsAndSort(startDate, endDate, userId, SORT_DATETIME_DESC);
+        User user = crudUserRepository.findById(userId).get();
+        return crudRepository.findByDateTimeBetweenAndUserIs(startDate, endDate, user, SORT_DATETIME_DESC);
     }
 }
